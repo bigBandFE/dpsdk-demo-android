@@ -1,0 +1,61 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
+
+android {
+    namespace 'com.dragonpass.en.dpsdk.demo'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.dragonpass.en.dpsdk.demo"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "SparkApp_${defaultConfig.versionName}_${variant.buildType.name}.apk"
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    implementation "com.squareup.okhttp3:okhttp:4.9.3"
+    implementation "cn.hutool:hutool-all:5.4.3"
+    implementation "com.alibaba:fastjson:1.2.73"
+    implementation "com.tencent:mmkv:2.4.0"
+    implementation 'com.github.bigBandFE:dpsdk-android:2.0.0'
+}

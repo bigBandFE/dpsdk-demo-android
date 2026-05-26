@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SparkApp</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="login">Sign in</string>
+    <string name="logout">Logout</string>
+    <string name="logged_in">Logged in</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="open_mini_app">Open mini app</string>
+    <string name="account">Account</string>
+    <string name="password">Password</string>
+    <string name="please_enter_account_password">Please enter account and password</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="login_successful">Login successful</string>
+    <string name="login_failed">Login failed: %s</string>
+    <string name="logged_out_successfully">Logged out successfully</string>
+    <string name="not_implemented_yet">Not implemented yet</string>
+    <string name="miniApp_expected_cert_digest">1907FEF6D73E972F55BA2C0DF04FE3EE5F76E2A3C774FCD200FE032CE6B05CCB1</string>
+</resources>
