@@ -2,7 +2,7 @@ package com.dragonpass.en.dpsdk.demo.sso
 
 import android.util.Base64
 import android.util.Log
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -20,7 +20,7 @@ object SSOClient {
     private const val OPERATION_CODE = "get_login_free_redirect_url"
     private const val VERSION = "1.0"
 
-    private val gson = Gson()
+    private val gson = GsonBuilder().disableHtmlEscaping().create()
     private val client = OkHttpClient.Builder()
         .connectTimeout(SSOConfig.REQUEST_TIMEOUT_SEC, TimeUnit.SECONDS)
         .readTimeout(SSOConfig.REQUEST_TIMEOUT_SEC, TimeUnit.SECONDS)
@@ -46,6 +46,54 @@ object SSOClient {
         val encrypted = buildEncryptedRequest(plainBody, requestId)
 
         // ③ POST to OpenAPI
+        val response = sendOpenAPIRequest(encrypted)
+
+        // ④ Decrypt + verify
+        val decrypted = decryptOpenAPIResponse(response)
+
+        // ⑤ Extract h5Token
+        val token = extractH5Token(decrypted)
+
+        logAuthCodeSuccess(token)
+        SSOResult(token, requestId)
+    }
+
+    /**
+     * Get auth code for a specific category (product/tenant/member).
+     * Mirrors iOS DemoDPApp.login() — used for per-category SSO before opening a DPApp.
+     */
+    fun getAuthCode(
+        productCode: String,
+        tenantCode: String,
+        memberShipCode: String? = null,
+        verifyPurchaseProCode: String? = null,
+        module: String = "1",
+        redirectURL: String,
+        pageType: String = "landing",
+        loginPath: String = "/api/business/auth/visitor/login",
+    ): Result<SSOResult> = runCatching {
+        val requestId = "req-${System.currentTimeMillis()}"
+        val effectiveMemberCode = memberShipCode ?: SSOConfig.MEMBER_SHIP_CODE
+        logSSOStart(requestId)
+
+        // ① Build plain body with category-specific params
+        val plainBody = OpenAPIPlainBody(
+            tenantCode = tenantCode,
+            memberShipCode = effectiveMemberCode,
+            redirectURL = redirectURL,
+            language = SSOConfig.LANGUAGE,
+            channel = SSOConfig.CHANNEL,
+            productCode = productCode,
+            pageType = pageType,
+            module = module.toInt(),
+            actionType = "operate",
+            needH5Token = SSOConfig.NEED_H5_TOKEN,
+        )
+
+        // ② Encrypt
+        val encrypted = buildEncryptedRequest(plainBody, requestId)
+
+        // ③ POST OpenAPI
         val response = sendOpenAPIRequest(encrypted)
 
         // ④ Decrypt + verify

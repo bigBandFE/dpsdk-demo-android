@@ -21,6 +21,9 @@
 #-renamesourcefileattribute SourceFile
 -keep class com.dragonpass.en.sparkapp.entity.** { *; }
 
+# Keep SSO crypto classes (RSA key parsing via JCA — must not be obfuscated)
+-keep class com.dragonpass.en.dpsdk.demo.sso.** { *; }
+
 -dontwarn com.chenlb.mmseg4j.ComplexSeg
 -dontwarn com.chenlb.mmseg4j.Dictionary
 -dontwarn com.chenlb.mmseg4j.MMSeg

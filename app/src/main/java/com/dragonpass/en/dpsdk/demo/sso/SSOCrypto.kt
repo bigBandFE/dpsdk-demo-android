@@ -80,9 +80,23 @@ object SSOCrypto {
     // ═══ Key parsing ═══
 
     private fun parsePublicKey(pem: String): java.security.PublicKey {
-        val der = pkcs1ToX509PublicKey(pemToDer(pem))
-        val spec = X509EncodedKeySpec(der)
+        val der = pemToDer(pem)
+        // Detect format: X.509 SPKI starts with SEQUENCE { SEQUENCE (algoId)... }
+        // while PKCS#1 starts with SEQUENCE { INTEGER (modulus)... }
+        val x509der = if (isX509SPKI(der)) der else pkcs1ToX509PublicKey(der)
+        val spec = X509EncodedKeySpec(x509der)
         return KeyFactory.getInstance("RSA").generatePublic(spec)
+    }
+
+    /** Check if DER bytes are already X.509 SubjectPublicKeyInfo (not raw PKCS#1). */
+    private fun isX509SPKI(der: ByteArray): Boolean {
+        if (der.size < 4 || der[0] != 0x30.toByte()) return false
+        // Skip outer SEQUENCE to get to the content
+        var offset = 2
+        if (der[1].toInt() and 0x80 != 0) offset += der[1].toInt() and 0x7f
+        // X.509: content starts with SEQUENCE (AlgorithmIdentifier, tag 0x30)
+        // PKCS#1: content starts with INTEGER (modulus, tag 0x02)
+        return offset < der.size && der[offset] == 0x30.toByte()
     }
 
     private fun parsePrivateKey(pem: String): java.security.PrivateKey {
@@ -111,17 +125,17 @@ object SSOCrypto {
     private fun pkcs1ToX509PublicKey(pkcs1: ByteArray): ByteArray {
         // X.509 SPKI = SEQUENCE { AlgorithmIdentifier, BIT STRING (PKCS#1) }
         val algoId = byteArrayOf(
-            0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00
+            0x30.toByte(), 0x0d.toByte(), 0x06.toByte(), 0x09.toByte(), 0x2a.toByte(), 0x86.toByte(), 0x48.toByte(), 0x86.toByte(), 0xf7.toByte(), 0x0d.toByte(), 0x01.toByte(), 0x01.toByte(), 0x01.toByte(), 0x05.toByte(), 0x00.toByte()
         )
-        val bitString = ByteArray(1 + pkcs1.size) { 0x00 }.also { System.arraycopy(pkcs1, 0, it, 1, pkcs1.size) }
+        val bitString = ByteArray(1 + pkcs1.size) { 0x00.toByte() }.also { System.arraycopy(pkcs1, 0, it, 1, pkcs1.size) }
         return wrapSequence(algoId + wrapSequence(0x03, bitString))
     }
 
     /** PKCS#1 private key → PKCS#8. */
     private fun pkcs1ToPkcs8PrivateKey(pkcs1: ByteArray): ByteArray {
-        val version = byteArrayOf(0x02, 0x01, 0x00)
+        val version = byteArrayOf(0x02.toByte(), 0x01.toByte(), 0x00.toByte())
         val algoId = byteArrayOf(
-            0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00
+            0x30.toByte(), 0x0d.toByte(), 0x06.toByte(), 0x09.toByte(), 0x2a.toByte(), 0x86.toByte(), 0x48.toByte(), 0x86.toByte(), 0xf7.toByte(), 0x0d.toByte(), 0x01.toByte(), 0x01.toByte(), 0x01.toByte(), 0x05.toByte(), 0x00.toByte()
         )
         val pkcs1Wrapped = wrapSequence(0x04, pkcs1)
         return wrapSequence(version + algoId + pkcs1Wrapped)

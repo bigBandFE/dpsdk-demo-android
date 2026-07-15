@@ -32,9 +32,6 @@ class App : Application() {
                     .setEnv(DPSDK.Env.UAT)
                     .build()
             )
-            .setGlobalErrorListener { jsException ->
-                Log.e(TAG, "DPSDK error: code=${jsException.code}, msg=${jsException.msg}")
-            }
 
         requestAuthCode()
     }
