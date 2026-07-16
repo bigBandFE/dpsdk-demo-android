@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SparkApp</string>
+    <string name="app_name">DP Hybrid SDK</string>
     <string name="hello_world">Hello World!</string>
     <string name="login">Sign in</string>
     <string name="logout">Logout</string>
