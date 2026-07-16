@@ -1,18 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Matches iOS DemoDPSDKHomeView + HeroSectionView layout -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/home_background"
+    android:fillViewport="true">
 
-    <ListView
-        android:id="@+id/list_apps"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@+id/loading_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp">
 
-</FrameLayout>
+            <!-- ===== Hero Section (matches HeroSectionView) ===== -->
+
+            <!-- BadgeView: "Dragonpass Hybrid SDK" pill -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:background="@drawable/home_badge_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
+
+                <!-- Green dot -->
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/home_status_dot_bg" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Dragonpass Hybrid SDK"
+                    android:textColor="@color/home_muted"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Hero Title -->
+            <TextView
+                android:id="@+id/hero_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:fontFamily="sans-serif"
+                android:letterSpacing="-0.02"
+                android:lineSpacingExtra="6dp"
+                android:text="Build travel experiences with DP SDK"
+                android:textColor="@color/home_title"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <!-- Hero Description -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="sans-serif"
+                android:text="A polished host app demo for launching Dragonpass DPApps with native-feeling integration."
+                android:textColor="@color/home_text"
+                android:textSize="16sp" />
+
+            <!-- ===== Apps Section (matches DPApp Ecosystem) ===== -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="DPApp Ecosystem"
+                android:textColor="@color/home_muted"
+                android:textSize="12sp" />
+
+            <!-- Lounge Button -->
+            <include
+                android:id="@+id/btn_lounge"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Fast Track Button -->
+            <include
+                android:id="@+id/btn_fast_track"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <!-- Loading overlay -->
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+</ScrollView>

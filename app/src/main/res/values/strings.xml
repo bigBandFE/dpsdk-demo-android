@@ -15,4 +15,26 @@
     <string name="logged_out_successfully">Logged out successfully</string>
     <string name="not_implemented_yet">Not implemented yet</string>
     <string name="miniApp_expected_cert_digest">1907FEF6D73E972F55BA2C0DF04FE3EE5F76E2A3C774FCD200FE032CE6B05CCB1</string>
+    <string name="tap_to_enter">Tap to Enter</string>
+    <string name="app_icon">App Icon</string>
+    <string name="sparkapp_demo_title">SparkApp Demo</string>
+    <string name="sparkapp_demo_subtitle">Experience the powerful features of SparkApp Mini Program SDK</string>
+    <string name="app_list">App List</string>
+    <string name="about_sparkapp">About SparkApp</string>
+    <string name="feature_high_perf">High Performance</string>
+    <string name="feature_high_perf_desc">Optimized page loading mechanism</string>
+    <string name="feature_easy_integration">Easy Integration</string>
+    <string name="feature_easy_integration_desc">Launch mini program with one line of code</string>
+    <string name="feature_secure">Secure &amp; Reliable</string>
+    <string name="feature_secure_desc">Complete permission control mechanism</string>
+    <string name="feature_config_driven">Configuration Driven</string>
+    <string name="feature_config_driven_desc">Flexible configuration center support</string>
+    <string name="lounge_desc">Lounge access verification</string>
+    <string name="lounge">Lounge</string>
+    <string name="fast_track">Fast Track</string>
+    <string name="fast_track_desc">Fast Track security screening</string>
+    <string name="in_development">In Development</string>
+    <string name="in_development_desc">Web Front-end App Debug</string>
+    <string name="esim_demo">eSIM Demo</string>
+    <string name="esim_demo_desc">Experience eSIM Mini Program Features</string>
 </resources>
