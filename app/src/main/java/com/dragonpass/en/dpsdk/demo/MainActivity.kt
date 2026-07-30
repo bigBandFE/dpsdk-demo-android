@@ -34,13 +34,17 @@ class MainActivity : AppCompatActivity() {
         val appId: String,
         val title: String,
         val subtitle: String,
+        val iconResId: Int,
         val productCode: String,
         val tenantCode: String,
         val memberShipCode: String,
+        val verifyPurchaseProCode: String? = null,
         val module: String,
         val redirectURL: String,
         val pageType: String,
         val loginPath: String,
+        val channel: String? = null,
+        val timeout: String? = null,
     )
 
     private val apps = listOf(
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity() {
             appId = "lounge",
             title = "Lounge",
             subtitle = "Launch lounge discovery and booking flows.",
+            iconResId = R.drawable.ic_lounge,
             productCode = "IL0494000001",
             tenantCode = "0494",
             memberShipCode = "8576376517994777",
@@ -60,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             appId = "fastTrack",
             title = "Fast Track",
             subtitle = "Open priority airport security experiences.",
+            iconResId = R.drawable.ic_fast_track,
             productCode = "QT0494000001",
             tenantCode = "0494",
             memberShipCode = "8576376517994777",
@@ -67,6 +73,61 @@ class MainActivity : AppCompatActivity() {
             redirectURL = "https://g-front-uat.dragonpass.com/standard-lfd/#/fast-track/landing",
             pageType = "landing",
             loginPath = "/api/business/auth/visitor/login",
+        ),
+        CategoryConfig(
+            appId = "flightDelay",
+            title = "Flight Delay",
+            subtitle = "Claim flight delay compensation.",
+            iconResId = R.drawable.ic_flight_delay,
+            productCode = "FD0494000001",
+            tenantCode = "0494",
+            memberShipCode = "8576376517994777",
+            module = "3",
+            redirectURL = "https://g-front-uat.dragonpass.com/standard-flight-delay/flight-delay/landing",
+            pageType = "landing",
+            loginPath = "/api/business/auth/visitor/login",
+        ),
+        CategoryConfig(
+            appId = "transport",
+            title = "Transport",
+            subtitle = "Launch transport transfer and booking flows.",
+            iconResId = R.drawable.ic_transport,
+            productCode = "LS0494000001",
+            tenantCode = "0494",
+            memberShipCode = "8576376517994777",
+            module = "9",
+            redirectURL = "https://g-front-uat.dragonpass.com/standard-limousine/#/transport/landing",
+            pageType = "landing",
+            loginPath = "/api/business/auth/login",
+        ),
+        CategoryConfig(
+            appId = "localOffer",
+            title = "Local Offer",
+            subtitle = "Explore local dining, shopping and experience offers.",
+            iconResId = R.drawable.ic_local_offer,
+            productCode = "ISC0494000001",
+            tenantCode = "0494",
+            memberShipCode = "8576376517994777",
+            module = "4",
+            redirectURL = "https://g-front-uat.dragonpass.com/standard-local-offer/#/local-offer/landing",
+            pageType = "landing",
+            loginPath = "/api/business/auth/login",
+        ),
+        CategoryConfig(
+            appId = "esim",
+            title = "eSIM",
+            subtitle = "Purchase and manage international eSIM data plans.",
+            iconResId = R.drawable.ic_esim,
+            productCode = "ISC0331000019",
+            tenantCode = "0331",
+            memberShipCode = "8575545438323161",
+            verifyPurchaseProCode = "ISC0331000019",
+            module = "9",
+            redirectURL = "https://g-front-uat.dragonpass.com/standard-esim/auth",
+            pageType = "esim-landing",
+            loginPath = "/api/business/auth/login",
+            channel = "global-app",
+            timeout = "99999999",
         ),
     )
 
@@ -112,31 +173,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val loungeCard = findViewById<MaterialCardView>(R.id.btn_lounge)
-        val fastTrackCard = findViewById<MaterialCardView>(R.id.btn_fast_track)
-
-        setupButton(
-            card = loungeCard,
-            iconResId = R.drawable.ic_lounge,
-            config = apps[0],
-            appIdLabel = "lounge",
+        val buttonIds = listOf(
+            R.id.btn_lounge to 0,
+            R.id.btn_fast_track to 1,
+            R.id.btn_flight_delay to 2,
+            R.id.btn_transport to 3,
+            R.id.btn_local_offer to 4,
+            R.id.btn_esim to 5,
         )
 
-        setupButton(
-            card = fastTrackCard,
-            iconResId = R.drawable.ic_fast_track,
-            config = apps[1],
-            appIdLabel = "fastTrack",
-        )
+        buttonIds.forEach { (id, index) ->
+            val card = findViewById<MaterialCardView>(id)
+            setupButton(
+                card = card,
+                config = apps[index],
+                appIdLabel = apps[index].appId,
+            )
+        }
     }
 
     private fun setupButton(
         card: MaterialCardView,
-        iconResId: Int,
         config: CategoryConfig,
         appIdLabel: String,
     ) {
-        card.findViewById<ImageView>(R.id.card_icon).setImageResource(iconResId)
+        card.findViewById<ImageView>(R.id.card_icon).setImageResource(config.iconResId)
         card.findViewById<TextView>(R.id.card_title).text = config.title
         card.findViewById<TextView>(R.id.card_subtitle).text = config.subtitle
         card.findViewById<TextView>(R.id.card_badge).text = "SDK appId: $appIdLabel"
@@ -153,10 +214,13 @@ class MainActivity : AppCompatActivity() {
                     productCode = config.productCode,
                     tenantCode = config.tenantCode,
                     memberShipCode = config.memberShipCode,
+                    verifyPurchaseProCode = config.verifyPurchaseProCode,
                     module = config.module,
                     redirectURL = config.redirectURL,
                     pageType = config.pageType,
                     loginPath = config.loginPath,
+                    channel = config.channel,
+                    timeout = config.timeout,
                 ).getOrThrow()
                 Log.d(TAG, "SSO success: appId=${config.appId}, requestId=${result.requestId}")
 

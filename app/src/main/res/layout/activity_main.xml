@@ -98,6 +98,38 @@
                 android:id="@+id/btn_fast_track"
                 layout="@layout/item_app_button"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Flight Delay Button -->
+            <include
+                android:id="@+id/btn_flight_delay"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Transport Button -->
+            <include
+                android:id="@+id/btn_transport"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Local Offer Button -->
+            <include
+                android:id="@+id/btn_local_offer"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
+
+            <!-- eSIM Button -->
+            <include
+                android:id="@+id/btn_esim"
+                layout="@layout/item_app_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>

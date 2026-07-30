@@ -43,7 +43,7 @@ object SSOClient {
         val plainBody = buildPlainBody()
 
         // ② Encrypt: AES key + IV → encrypt body, RSA encrypt AES key, RSA sign
-        val encrypted = buildEncryptedRequest(plainBody, requestId)
+        val encrypted = buildEncryptedRequest(plainBody, requestId, SSOConfig.TENANT_CODE)
 
         // ③ POST to OpenAPI
         val response = sendOpenAPIRequest(encrypted)
@@ -71,9 +71,12 @@ object SSOClient {
         redirectURL: String,
         pageType: String = "landing",
         loginPath: String = "/api/business/auth/visitor/login",
+        channel: String? = null,
+        timeout: String? = null,
     ): Result<SSOResult> = runCatching {
         val requestId = "req-${System.currentTimeMillis()}"
         val effectiveMemberCode = memberShipCode ?: SSOConfig.MEMBER_SHIP_CODE
+        val effectiveChannel = channel ?: SSOConfig.CHANNEL
         logSSOStart(requestId)
 
         // ① Build plain body with category-specific params
@@ -82,16 +85,18 @@ object SSOClient {
             memberShipCode = effectiveMemberCode,
             redirectURL = redirectURL,
             language = SSOConfig.LANGUAGE,
-            channel = SSOConfig.CHANNEL,
+            channel = effectiveChannel,
             productCode = productCode,
             pageType = pageType,
             module = module.toInt(),
             actionType = "operate",
             needH5Token = SSOConfig.NEED_H5_TOKEN,
+            verifyPurchaseProCode = verifyPurchaseProCode,
+            timeout = timeout,
         )
 
-        // ② Encrypt
-        val encrypted = buildEncryptedRequest(plainBody, requestId)
+        // ② Encrypt (use per-category tenantCode in sign + header)
+        val encrypted = buildEncryptedRequest(plainBody, requestId, tenantCode)
 
         // ③ POST OpenAPI
         val response = sendOpenAPIRequest(encrypted)
@@ -128,6 +133,7 @@ object SSOClient {
     private fun buildEncryptedRequest(
         plainBody: OpenAPIPlainBody,
         requestId: String,
+        tenantCode: String,
     ): EncryptedRequestBundle {
         val timestamp = System.currentTimeMillis()
         val nonce = "nonce-${UUID.randomUUID().toString().replace("-", "").lowercase()}"
@@ -142,12 +148,12 @@ object SSOClient {
         val encryptedBody = SSOCrypto.encryptAES(plainJson, aesKey, iv)
         val encryptKey = SSOCrypto.encryptRSA(aesKey, SSOConfig.SAAS_PUBLIC_KEY)
 
-        val signContent = "$timestamp$nonce${SSOConfig.TENANT_CODE}$encryptKey$iv$encryptedBody"
+        val signContent = "$timestamp$nonce$tenantCode$encryptKey$iv$encryptedBody"
         val sign = SSOCrypto.signSHA256RSA(signContent, SSOConfig.CUSTOMER_PRIVATE_KEY)
 
         val headers = mapOf(
             "Content-Type" to "application/json",
-            "X-Tenant-Code" to SSOConfig.TENANT_CODE,
+            "X-Tenant-Code" to tenantCode,
             "X-Timestamp" to timestamp.toString(),
             "X-Nonce" to nonce,
             "X-Sign" to sign,
